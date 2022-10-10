@@ -1,4 +1,4 @@
-﻿namespace Domain; 
+﻿namespace Domain.Models; 
 
 public class Schedule {
     public int DoctorId { get; set; }
