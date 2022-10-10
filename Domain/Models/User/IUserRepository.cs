@@ -1,6 +1,12 @@
 namespace Domain.Models;
 public interface IUserRepository : IRepository<User> {
-    bool IsUserExist(string login);
+    
+    
+    bool IsExist(string login, string password);
+
+    bool IsExist(string login);
+    bool IsValid(User user);
     User GetByLogin(string login);
+    
 
 }
