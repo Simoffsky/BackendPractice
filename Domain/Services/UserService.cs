@@ -18,6 +18,9 @@ public class UserService {
     }
 
     public Result<User> GetByLogin(string login) {
+        if (string.IsNullOrEmpty(login))
+            return Result.Fail<User>("Empty login");
+        
         if (!_repository.IsExist(login))
             return Result.Fail<User>("User with this login doesn't exists");
 
@@ -26,7 +29,7 @@ public class UserService {
     }
 
     public Result<bool> CheckExist(string login, string password) {
-        if (login == string.Empty || password == string.Empty)
+        if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             return Result.Fail<bool>("Empty login/password");
 
         return Result.Ok<bool>(_repository.IsExist(login, password));
