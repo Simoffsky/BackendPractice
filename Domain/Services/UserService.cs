@@ -9,11 +9,12 @@ public class UserService {
         _repository = repository;
     }
     public Result<User> CreateUser(User user) {
-        if (_repository.IsExist(user.Username))
-            return Result.Fail<User>("User with that username already exists");
-
         if (!_repository.IsValid(user))
             return Result.Fail<User>("User data is not valid");
+        
+        if (_repository.IsExist(user.Username))
+            return Result.Fail<User>("User with that username already exists");
+        
         return Result.Ok<User>(user);
     }
 
