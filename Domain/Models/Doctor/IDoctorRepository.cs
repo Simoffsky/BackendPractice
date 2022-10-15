@@ -1,5 +1,6 @@
 namespace Domain.Models; 
 
-public interface IDoctorRepository {
-    
+public interface IDoctorRepository : IRepository<Doctor>
+{
+    public IEnumerable<Doctor> GetBySpec(Specialization spec);
 }

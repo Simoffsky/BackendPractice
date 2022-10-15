@@ -35,7 +35,7 @@ public class UserServiceTests {
     }
     [Fact]
     public void LoginFound() {
-        _repository.Setup(repo => repo.IsExist(It.Is<string>(s => s == "aboba")))
+        _repository.Setup(repo => repo.ExistLogin(It.Is<string>(s => s == "aboba")))
             .Returns(true);
         _repository.Setup(repo => repo.GetByLogin(It.Is<string>(s => s=="aboba")))
             .Returns(GetUser("aboba"));
@@ -47,7 +47,7 @@ public class UserServiceTests {
 
     [Fact]
     public void CreateAlreadyExists() {
-        _repository.Setup(repo => repo.IsExist(It.Is<string>(s => s == "aboba")))
+        _repository.Setup(repo => repo.ExistLogin(It.Is<string>(s => s == "aboba")))
             .Returns(true);
 
         _repository.Setup(repo => repo.IsValid(It.IsAny<User>()))
@@ -72,7 +72,7 @@ public class UserServiceTests {
     
     [Fact]
     public void CreateOk() {
-        _repository.Setup(repo => repo.IsExist(It.IsAny<string>()))
+        _repository.Setup(repo => repo.ExistLogin(It.IsAny<string>()))
             .Returns(false);
         _repository.Setup(repo => repo.IsValid(It.IsAny<User>()))
             .Returns(true);
@@ -83,16 +83,24 @@ public class UserServiceTests {
     }
 
     [Fact]
-    public void CheckExistEmptyLoginPassword() {
-        var response = _userService.CheckExist("", "");
+    public void CheckExistEmptyLogin() {
+        var response = _userService.CheckExist("", "password");
         Assert.False(response.Success);
-        Assert.Equal("Empty login/password", response.Error);
+        Assert.Equal("Empty login", response.Error);
         
+    }
+
+    [Fact]
+    public void CheckExistEmptyPassword()
+    {
+        var response = _userService.CheckExist("login", "");
+        Assert.False(response.Success);
+        Assert.Equal("Empty password", response.Error);
     }
     
     [Fact]
     public void CheckExistLoginPasswordOk() {
-        _repository.Setup(repo => repo.IsExist(
+        _repository.Setup(repo => repo.ExistLogin(
                 It.Is<string>(u => u == "aboba"),
                 It.Is<string>(p => p == "123")
             )
