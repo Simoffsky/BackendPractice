@@ -12,10 +12,10 @@ public class DoctorService {
 
 	public Result<Doctor> CreateDoctor(Doctor doctor) {
 		if (string.IsNullOrEmpty(doctor.FullName))
-			Result.Fail<Doctor>("Invalid doctor FullName");
+			return Result.Fail<Doctor>("Invalid doctor FullName");
 
 		if (_repository.Exists(doctor.Id))
-			Result.Fail<Doctor>("Doctor already exists");
+			return Result.Fail<Doctor>("Doctor already exists");
 		
 		_repository.Create(doctor);
 		return Result.Ok(doctor);
@@ -34,7 +34,7 @@ public class DoctorService {
 	}
 
 	public Result<Doctor> GetById(int id) {
-		if (_repository.Exists(id))
+		if (!_repository.Exists(id))
 			return Result.Fail<Doctor>("Doctor doesn't exists");
 
 		return Result.Ok<Doctor>(_repository.Get(id));

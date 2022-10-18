@@ -8,5 +8,7 @@ public interface IRepository<T> where T: class {
 
     public bool Exists(int id);
     public bool Delete(int id);
+
+    public bool IsValid(T entity);
     public T Update(int id);
 }

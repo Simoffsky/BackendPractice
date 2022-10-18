@@ -47,7 +47,7 @@ public class UserServiceTests {
 
     [Fact]
     public void CreateAlreadyExists() {
-        _repository.Setup(repo => repo.ExistLogin(It.Is<string>(s => s == "aboba")))
+        _repository.Setup(repo => repo.ExistLogin(It.Is<string>(s => s == "aboba"))) // id
             .Returns(true);
 
         _repository.Setup(repo => repo.IsValid(It.IsAny<User>()))
