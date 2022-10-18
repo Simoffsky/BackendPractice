@@ -1,5 +1,5 @@
 ﻿namespace Domain.Models; 
 
-public class IScheduleRepository {
-	
+public interface IScheduleRepository: IRepository<Schedule> {
+	IEnumerable<Schedule> GetScheduleByDate(Doctor doctor, DateOnly date);
 }
