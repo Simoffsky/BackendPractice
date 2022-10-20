@@ -12,8 +12,10 @@ public class ScheduleService {
 	}
 
 	public Result<IEnumerable<Schedule>> GetByDoctor(Doctor doctor, DateOnly date) {
+		if (!_doctorRepository.Exists(doctor.Id))
+			return Result.Fail<IEnumerable<Schedule>>("Doctor doesn't exists");
 		if (!_doctorRepository.IsValid(doctor))
-			return Result.Fail<IEnumerable<Schedule>>("Doctor is invalid");
+			return Result.Fail<IEnumerable<Schedule>>("Doctor is not invalid");
 
 		return Result.Ok<IEnumerable<Schedule>>(_repository.GetScheduleByDate(doctor, date));
 	}
@@ -31,7 +33,7 @@ public class ScheduleService {
 
 	public Result<Schedule> Update(Schedule schedule) {
 		if(!_repository.Exists(schedule.Id))
-			Result.Fail<Schedule>("Schedule Doesn't exists");
+			return Result.Fail<Schedule>("Schedule Doesn't exists");
 
 		_repository.Update(schedule);
 		return Result.Ok<Schedule>(schedule);
@@ -39,7 +41,7 @@ public class ScheduleService {
 
 	public Result<Schedule> Delete(Schedule schedule) {
 		if(!_repository.Exists(schedule.Id))
-			Result.Fail<Schedule>("Schedule Doesn't exists");
+			return Result.Fail<Schedule>("Schedule Doesn't exists");
 		
 		_repository.Delete(schedule.Id);
 		return Result.Ok<Schedule>(schedule);
