@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-namespace Domain.Appointment; 
+﻿namespace Domain.Models; 
 
 public class Appointment {
 	public int Id;
