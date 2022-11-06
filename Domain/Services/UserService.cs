@@ -12,9 +12,10 @@ public class UserService {
         if (!_repository.IsValid(user))
             return Result.Fail<User>("User data is not valid");
         
-        if (_repository.IsExist(user.Username))
+        if (_repository.ExistLogin(user.Username))
             return Result.Fail<User>("User with that username already exists");
-        
+
+        _repository.Create(user);
         return Result.Ok<User>(user);
     }
 
@@ -22,7 +23,7 @@ public class UserService {
         if (string.IsNullOrEmpty(login))
             return Result.Fail<User>("Empty login");
         
-        if (!_repository.IsExist(login))
+        if (!_repository.ExistLogin(login))
             return Result.Fail<User>("User with this login doesn't exists");
 
         return Result.Ok<User>(_repository.GetByLogin(login));
@@ -30,9 +31,13 @@ public class UserService {
     }
 
     public Result<bool> CheckExist(string login, string password) {
-        if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
-            return Result.Fail<bool>("Empty login/password");
+        if (string.IsNullOrEmpty(login))
+            return Result.Fail<bool>("Empty login");
+        
+        if (string.IsNullOrEmpty(password))
+            return Result.Fail<bool>("Empty password");
 
-        return Result.Ok<bool>(_repository.IsExist(login, password));
+
+        return Result.Ok<bool>(_repository.ExistLogin(login, password));
     }
 }
