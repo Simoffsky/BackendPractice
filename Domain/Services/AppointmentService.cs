@@ -30,14 +30,14 @@ public class AppointmentService {
 		return Result.Ok(appointment);
 	}
 
-	public Result<IEnumerable<Appointment>> GetFreeBySpec(Specialization spec) {
+	public Result<IEnumerable<DateTime>> GetFreeBySpec(Specialization spec) {
 		var list = _repository.GetFreeBySpec(spec);
 		return Result.Ok(list);
 	}
 	
-	public Result<IEnumerable<Appointment>> GetFreeByDoctor(Doctor doctor) {
+	public Result<IEnumerable<DateTime>> GetFreeByDoctor(Doctor doctor) {
 		if (!_doctorRepository.Exists(doctor.Id))
-			return Result.Fail<IEnumerable<Appointment>>("Doctor doesn't exists");
+			return Result.Fail<IEnumerable<DateTime>>("Doctor doesn't exists");
 		var list = _repository.GetFreeByDoctor(doctor);
 		return Result.Ok(list);
 	}
