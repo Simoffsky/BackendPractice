@@ -25,10 +25,7 @@ public class AppointmentRepository: IAppointmentRepository {
     }
     
     public IEnumerable<Appointment> List() {
-        var list = new List<Appointment>();
-        foreach(var appointmentModel in _context.Appointments) 
-            list.Add(appointmentModel.ToDomain());
-        return list;
+        return _context.Appointments.Select(appointmentModel => appointmentModel.ToDomain()).ToList();
     }
 
     public bool Delete(int id) {

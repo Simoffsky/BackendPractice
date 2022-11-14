@@ -20,10 +20,7 @@ public class ScheduleRepository: IScheduleRepository {
         return _context.Schedules.FirstOrDefault(s => s.Id == id).ToDomain();
     }
     public IEnumerable<Schedule> List() {
-        var list = new List<Schedule>();
-        foreach(var scheduleModel in _context.Schedules) 
-            list.Add(scheduleModel.ToDomain());
-        return list;
+        return _context.Schedules.Select(scheduleModel => scheduleModel.ToDomain()).ToList();
     }
 
     public bool Exists(int id) {

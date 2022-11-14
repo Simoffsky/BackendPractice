@@ -22,10 +22,7 @@ public class UserRepository : IUserRepository {
     }
     
     public IEnumerable<User> List() {
-        var list = new List<User>();
-        foreach(var userModel in _context.Users) 
-            list.Add(userModel.ToDomain());
-        return list;
+        return _context.Users.Select(userModel => userModel.ToDomain()).ToList();
     }
 
     public bool Exists(int id) {

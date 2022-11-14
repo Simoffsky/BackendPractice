@@ -20,10 +20,7 @@ public class DoctorRepository : IDoctorRepository {
     }
     
     public IEnumerable<Doctor> List() {
-        var list = new List<Doctor>();
-        foreach(var doctorModel in _context.Doctors) 
-            list.Add(doctorModel.ToDomain());
-        return list;
+        return _context.Doctors.Select(doctorModel => doctorModel.ToDomain()).ToList();
     }
 
     public bool Exists(int id) {
