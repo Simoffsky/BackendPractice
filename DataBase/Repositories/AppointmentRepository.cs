@@ -51,15 +51,19 @@ public class AppointmentRepository: IAppointmentRepository {
         return entity;
     }
 
-    public IEnumerable<DateTime> GetFreeBySpec(Specialization spec) {
+    public IEnumerable<Appointment> GetAllBySpec(Specialization spec) {
         var doctors = _context.Doctors.Where(d => d.Specialization.Id == spec.Id);
-        var appointments = _context.Appointments.Where(a => doctors.Any(d => a.DoctorId == d.Id));
-        return ExcludeAppointments(appointments);
+        return _context.Appointments.Where(a => doctors.Any(d => a.DoctorId == d.Id))
+            .Select(a => a.ToDomain())
+            .ToList();
+        
+        //return ExcludeAppointments(appointments);
     }
 
-    public IEnumerable<DateTime> GetFreeByDoctor(Doctor doctor) {
-        var appointments = _context.Appointments.Where(a => a.DoctorId == doctor.Id);
-        return ExcludeAppointments(appointments);
+    public IEnumerable<Appointment> GetAllByDoctor(Doctor doctor) {
+        return _context.Appointments.Where(a => a.DoctorId == doctor.Id)
+            .Select(a => a.ToDomain())
+            .ToList();
     }
 
     public bool CheckFreeBySpec(DateTime time, Specialization specialization) {
@@ -76,31 +80,5 @@ public class AppointmentRepository: IAppointmentRepository {
 
     public Appointment CreateBySpec(DateTime dateTime, Specialization spec) {
         throw new NotImplementedException();
-    }
-
-    private DateTime getCurrentFormattedTime() { // discreted by half-hours timing (only hh:30 or hh:00)
-        var time = DateTime.Now;
-        if (time.Minute == 0)
-            time = new DateTime(time.Year, time.Month, time.Day, time.Hour, 0, 0);
-        if (time.Minute <= 30)
-            time = new DateTime(time.Year, time.Month, time.Day, time.Hour, 30, 0);
-        else {
-            time = time.AddHours(1);
-            time = new DateTime(time.Year, time.Month, time.Day, time.Hour, 0, 0);
-        }
-        return time;
-    }
-
-    private IEnumerable<DateTime> ExcludeAppointments(IQueryable<AppointmentModel> appointments) {
-        var time = getCurrentFormattedTime();
-        var timeList = new List<DateTime>(); // list of free time
-        var timeNow = DateTime.Now;
-        while (time.Day == timeNow.Day) {
-            if (appointments.All(a => time < a.StartTime || time > a.EndTime))
-                timeList.Add(time);
-            time = time.AddMinutes(30);
-        }
-
-        return timeList;
     }
 }
