@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -23,7 +23,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\DataBase\DataBase.csproj" />
       <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="bin\Debug\net7.0\private.json" />
     </ItemGroup>
 
 </Project>
