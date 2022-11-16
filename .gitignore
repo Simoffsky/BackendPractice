@@ -1,4 +1,6 @@
-﻿# Common IntelliJ Platform excludes
+﻿private.json
+
+# Common IntelliJ Platform excludes
 
 # User specific
 **/.idea/**/workspace.xml
@@ -32,3 +34,7 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+
+
+BackendPractice.sln.DotSettings.user

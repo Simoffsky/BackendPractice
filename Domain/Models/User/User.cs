@@ -17,5 +17,4 @@ public class User {
         FullName = fullName;
         Role = role;
     }
-
 }
