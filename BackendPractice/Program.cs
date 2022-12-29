@@ -13,7 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<UserService>();
-
+builder.Services.AddTransient<IDoctorRepository, DoctorRepository>();
+builder.Services.AddTransient<DoctorService>();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql($""));
 
