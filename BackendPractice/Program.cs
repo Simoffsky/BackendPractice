@@ -17,6 +17,8 @@ builder.Services.AddTransient<IDoctorRepository, DoctorRepository>();
 builder.Services.AddTransient<DoctorService>();
 builder.Services.AddTransient<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddTransient<ScheduleService>();
+builder.Services.AddTransient<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddTransient<AppointmentService>();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql($""));
 
