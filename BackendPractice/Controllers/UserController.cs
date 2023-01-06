@@ -47,11 +47,11 @@ public class UserController: ControllerBase {
             userView.PhoneNumber,
             userView.FullName,
             userView.Role);
-
+        
         var userResult = _service.CreateUser(user);
-
-        if (!userResult.Success)
-            return Problem(statusCode: 400, detail: userResult.Error);
+        
+         if (!userResult.Success)
+             return Problem(statusCode: 400, detail: userResult.Error);
         
         return Ok(userView);
     }

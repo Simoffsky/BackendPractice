@@ -13,6 +13,7 @@ public class ScheduleRepository: IScheduleRepository {
 
     public Schedule Create(Schedule item) {
         _context.Schedules.Add(item.ToModel());
+        _context.SaveChanges();
         return item;
     }
 
@@ -32,6 +33,7 @@ public class ScheduleRepository: IScheduleRepository {
         if (schedule == default)
             return false; // not deleted
         _context.Schedules.Remove(schedule);
+        _context.SaveChanges();
         return true;
     }
 
@@ -47,6 +49,7 @@ public class ScheduleRepository: IScheduleRepository {
 
     public Schedule Update(Schedule entity) {
         _context.Schedules.Update(entity.ToModel());
+        _context.SaveChanges();
         return entity;
     }
 

@@ -11,6 +11,7 @@ public class DoctorRepository : IDoctorRepository {
     
     public Doctor Create(Doctor item) {
         _context.Doctors.Add(item.ToModel());
+        _context.SaveChanges();
         return item;
     }
 
@@ -32,6 +33,7 @@ public class DoctorRepository : IDoctorRepository {
         if (doctor == default)
             return false; // Not deleted
         _context.Doctors.Remove(doctor);
+        _context.SaveChanges();
         return true;
     }
 
@@ -47,6 +49,7 @@ public class DoctorRepository : IDoctorRepository {
 
     public Doctor Update(Doctor entity) {
         _context.Doctors.Update(entity.ToModel());
+        _context.SaveChanges();
         return entity;
     }
 

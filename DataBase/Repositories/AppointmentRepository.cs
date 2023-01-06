@@ -13,6 +13,7 @@ public class AppointmentRepository: IAppointmentRepository {
 
     public Appointment Create(Appointment item) {
         _context.Appointments.Add(item.ToModel());
+        _context.SaveChanges();
         return item;
     }
 
@@ -33,6 +34,7 @@ public class AppointmentRepository: IAppointmentRepository {
         if (appointment == default)
             return false; // not deleted
         _context.Appointments.Remove(appointment);
+        _context.SaveChanges();
         return true;
     }
 
@@ -48,6 +50,7 @@ public class AppointmentRepository: IAppointmentRepository {
 
     public Appointment Update(Appointment entity) {
         _context.Appointments.Update(entity.ToModel());
+        _context.SaveChanges();
         return entity;
     }
 
@@ -57,7 +60,6 @@ public class AppointmentRepository: IAppointmentRepository {
             .Select(a => a.ToDomain())
             .ToList();
         
-        //return ExcludeAppointments(appointments);
     }
 
     public IEnumerable<Appointment> GetAllByDoctor(Doctor doctor) {

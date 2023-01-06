@@ -13,6 +13,7 @@ public class UserRepository : IUserRepository {
     
     public User Create(User item) {
         _context.Users.Add(item.ToModel());
+        _context.SaveChanges();
         return item;
     }
 
@@ -34,6 +35,7 @@ public class UserRepository : IUserRepository {
         if (user == default)
             return false; // not deleted
         _context.Users.Remove(user);
+        _context.SaveChanges();
         return true;
     }
 
@@ -53,6 +55,7 @@ public class UserRepository : IUserRepository {
 
     public User Update(User entity) {
         _context.Users.Update(entity.ToModel());
+        _context.SaveChanges();
         return entity;
     }
 

@@ -10,9 +10,11 @@ namespace BackendPractice.Controllers;
 [Route("Appointment")]
 public class AppointmentController: ControllerBase {
     private readonly AppointmentService _service;
+    private readonly DoctorService _doctorService;
 
-    public AppointmentController(AppointmentService service) {
+    public AppointmentController(AppointmentService service, DoctorService doctorService) {
         _service = service;
+        _doctorService = doctorService;
     }
 
     [HttpPost("add")]
@@ -57,8 +59,13 @@ public class AppointmentController: ControllerBase {
     }
     
     [HttpGet("get_free_by_doctor")]
-    public ActionResult<List<DateTime>> GetFreeByDoctor(Doctor doctor) {
-        var res = _service.GetFreeByDoctor(doctor);
+    public ActionResult<List<DateTime>> GetFreeByDoctor(int doctorId) {
+        var doctorRes = _doctorService.GetById(doctorId);
+        if (!doctorRes.Success)
+            return Problem(statusCode: 404, detail: doctorRes.Error);
+
+        
+        var res = _service.GetFreeByDoctor(doctorRes.Value);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
 

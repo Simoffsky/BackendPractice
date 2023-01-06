@@ -36,7 +36,7 @@ public class DoctorService {
 	public Result<Doctor> GetById(int id) {
 		if (!_repository.Exists(id))
 			return Result.Fail<Doctor>("Doctor doesn't exists");
-
+		
 		return Result.Ok<Doctor>(_repository.Get(id));
 	}
 
