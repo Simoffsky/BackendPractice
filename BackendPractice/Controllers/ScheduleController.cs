@@ -1,6 +1,7 @@
 using BackendPractice.View;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPractice.Controllers; 
@@ -37,6 +38,7 @@ public class ScheduleController: ControllerBase {
         return Ok(scheduleViews);
     }
 
+    [Authorize]
     [HttpPost("add")]
     public ActionResult<ScheduleView> AddSchedule(ScheduleView scheduleView) {
         var schedule = new Schedule(
@@ -53,7 +55,8 @@ public class ScheduleController: ControllerBase {
 
         return Ok(scheduleView);
     }
-
+    
+    [Authorize]
     [HttpPost("update")]
     public ActionResult<ScheduleView> UpdateSchedule(ScheduleView scheduleView) {
         var schedule = new Schedule(
@@ -71,6 +74,7 @@ public class ScheduleController: ControllerBase {
         return Ok(scheduleView);
     }
     
+    [Authorize]
     [HttpDelete("delete")]
     public ActionResult<ScheduleView> DeleteSchedule(ScheduleView scheduleView) {
         var schedule = new Schedule(

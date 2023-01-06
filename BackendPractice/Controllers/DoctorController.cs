@@ -1,6 +1,7 @@
 using BackendPractice.View;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPractice.Controllers; 
@@ -13,6 +14,7 @@ public class DoctorController: ControllerBase {
     _service = service;
     }
     
+    [Authorize]
     [HttpPost("create")]
     public ActionResult<DoctorView> CreateDoctor(string name, Specialization spec) {
     Doctor doctor = new(0, name, spec);

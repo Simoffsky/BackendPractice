@@ -1,15 +1,16 @@
 using BackendPractice.View;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPractice.Controllers; 
+
 
 [ApiController]
 [Route("user")]
 public class UserController: ControllerBase {
     private readonly UserService _service;
-
     public UserController(UserService service) {
         _service = service;
     }
@@ -31,6 +32,7 @@ public class UserController: ControllerBase {
         });
     }
     
+    [Authorize]
     [HttpPost("CreateUser")]
     public ActionResult<UserView> CreateUser(UserView userView)
     {

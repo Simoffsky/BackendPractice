@@ -1,6 +1,7 @@
 using BackendPractice.View;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPractice.Controllers; 
@@ -17,6 +18,7 @@ public class AppointmentController: ControllerBase {
         _doctorService = doctorService;
     }
 
+    [Authorize]
     [HttpPost("add")]
     public ActionResult<AppointmentView> SaveAppointment(AppointmentView appointmentView) {
         var appointment = new Appointment(
@@ -33,6 +35,7 @@ public class AppointmentController: ControllerBase {
         return Ok(appointmentView);
     }
     
+    [Authorize]
     [HttpPost("add_by_spec")]
     public ActionResult<AppointmentView> SaveAppointmentBySpec(DateTime dateTime, Specialization spec) {
         var res = _service.AddToConcreteDate(dateTime, spec);
