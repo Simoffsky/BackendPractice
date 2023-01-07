@@ -19,98 +19,98 @@ public class DoctorServiceTests {
 	[Fact]
 	public void CreateAlreadyExists() {
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(true);
+			.ReturnsAsync(true);
 
 		_repository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
 			.Returns(true);
 
 		var response = _doctorService.CreateDoctor(GetDoctor());
         
-		Assert.False(response.Success);
-		Assert.Equal("Doctor already exists", response.Error);
+		Assert.False(response.Result.Success);
+		Assert.Equal("Doctor already exists", response.Result.Error);
 	}
 
 	[Fact]
 	public void CreateInvalidFullName() {
 		Doctor doctor = GetDoctor(string.Empty);
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(false);
+			.ReturnsAsync(false);
 
 		var response = _doctorService.CreateDoctor(doctor);
-		Assert.False(response.Success);
+		Assert.False(response.Result.Success);
 	}
 
 	[Fact]
 	public void CreateOk() {
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(false);
+			.ReturnsAsync(false);
 
 		_repository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
 			.Returns(true);
 		
 		var response = _doctorService.CreateDoctor(GetDoctor());
 		
-		Assert.True(response.Success);
+		Assert.True(response.Result.Success);
 	}
 
 	[Fact]
 	public void DeleteNotExists() {
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(false);
+			.ReturnsAsync(false);
 		
 		_repository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
 			.Returns(true);
 		
 		var response = _doctorService.DeleteDoctor(GetDoctor().Id);
 		
-		Assert.False(response.Success);
-		Assert.Equal("Doctor doesn't exists", response.Error);
+		Assert.False(response.Result.Success);
+		Assert.Equal("Doctor doesn't exists", response.Result.Error);
 		
 	}
 
 	[Fact]
 	public void DeleteOk() {
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(true);
+			.ReturnsAsync(true);
 
 		_repository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
 			.Returns(true);
 		
 		var response = _doctorService.DeleteDoctor(GetDoctor().Id);
 		
-		Assert.True(response.Success);
+		Assert.True(response.Result.Success);
 	}
 	
 	[Fact]
 	public void GetAllOk() {
 		var response = _doctorService.GetAll();
-		Assert.True(response.Success);
+		Assert.True(response.Result.Success);
 	}
 	
 	[Fact]
 	public void GetByIdNotExists() {
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(false);
+			.ReturnsAsync(false);
 
 		var response = _doctorService.GetById(1);
 		
-		Assert.False(response.Success);
-		Assert.Equal("Doctor doesn't exists", response.Error);
+		Assert.False(response.Result.Success);
+		Assert.Equal("Doctor doesn't exists", response.Result.Error);
 	}
 
 	[Fact]
 	public void GetByIdOk() {
 		_repository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-			.Returns(true);
+			.ReturnsAsync(true);
 
 		var response = _doctorService.GetById(1);
 
-		Assert.True(response.Success);
+		Assert.True(response.Result.Success);
 	}
 	[Fact]
 	public void GetBySpecOk() {
 		var response = _doctorService.GetBySpec(new Specialization(1, "Проктолог"));
-		Assert.True(response.Success);
+		Assert.True(response.Result.Success);
 	}
 	
 }

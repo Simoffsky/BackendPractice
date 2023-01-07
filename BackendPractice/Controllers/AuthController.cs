@@ -20,13 +20,13 @@ public class AuthController: ControllerBase {
     }
     
     [HttpPost] 
-    public IActionResult CreateToken(string login, string password) {
+    public async Task<IActionResult> CreateToken(string login, string password) {
 
-        var res = _userService.CheckExist(login, password);
+        var res = await _userService.CheckExist(login, password);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
 
-        var user = _userService.GetByLogin(login).Value;
+        var user = (await _userService.GetByLogin(login)).Value;
         
         
         //create claims details based on the user information

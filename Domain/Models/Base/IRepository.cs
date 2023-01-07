@@ -2,13 +2,13 @@ namespace Domain.Models;
 
 public interface IRepository<T> where T: class {
 
-    public IEnumerable<T> List();
-    public T Create(T item);
-    public T? Get(int id);
+    public Task<IEnumerable<T>> List();
+    public Task<T> Create(T item);
+    public Task<T> Get(int id);
 
-    public bool Exists(int id);
-    public bool Delete(int id);
+    public Task<bool> Exists(int id);
+    public Task<bool> Delete(int id);
 
     public bool IsValid(T entity);
-    public T Update(T entity);
+    public Task<T> Update(T entity);
 }

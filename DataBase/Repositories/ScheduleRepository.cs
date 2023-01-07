@@ -1,5 +1,6 @@
 using DataBase.Converters;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataBase.Repositories; 
 
@@ -11,29 +12,30 @@ public class ScheduleRepository: IScheduleRepository {
     }
     
 
-    public Schedule Create(Schedule item) {
-        _context.Schedules.Add(item.ToModel());
-        _context.SaveChanges();
+    public async Task<Schedule> Create(Schedule item) {
+        await _context.Schedules.AddAsync(item.ToModel());
+        await _context.SaveChangesAsync();
         return item;
     }
 
-    public Schedule? Get(int id) {
-        return _context.Schedules.FirstOrDefault(s => s.Id == id).ToDomain();
+    public async Task<Schedule> Get(int id) {
+        var schedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == id);
+        return schedule.ToDomain();
     }
-    public IEnumerable<Schedule> List() {
-        return _context.Schedules.Select(scheduleModel => scheduleModel.ToDomain()).ToList();
-    }
-
-    public bool Exists(int id) {
-        return _context.Schedules.Any(s => s.Id == id);
+    public async Task<IEnumerable<Schedule>> List() {
+        return await _context.Schedules.Select(scheduleModel => scheduleModel.ToDomain()).ToListAsync();
     }
 
-    public bool Delete(int id) {
-        var schedule = _context.Schedules.FirstOrDefault(s => s.Id == id);
+    public async Task<bool> Exists(int id) {
+        return await _context.Schedules.AnyAsync(s => s.Id == id);
+    }
+
+    public async Task<bool> Delete(int id) {
+        var schedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == id);
         if (schedule == default)
             return false; // not deleted
         _context.Schedules.Remove(schedule);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
@@ -47,16 +49,16 @@ public class ScheduleRepository: IScheduleRepository {
         return true;
     }
 
-    public Schedule Update(Schedule entity) {
+    public async Task<Schedule> Update(Schedule entity) {
         _context.Schedules.Update(entity.ToModel());
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return entity;
     }
 
-    public IEnumerable<Schedule> GetScheduleByDate(Doctor doctor, DateOnly date) {
-        return _context.Schedules.Where(s => 
+    public async Task<IEnumerable<Schedule>> GetScheduleByDate(Doctor doctor, DateOnly date) {
+        return await _context.Schedules.Where(s => 
                      s.DoctorId == doctor.Id && 
                      s.StartTime.Date == date.ToDateTime(new TimeOnly())) // Cast DateOnly -> DateTime
-            .Select(s => s.ToDomain());                                   // with time - 00:00
+            .Select(s => s.ToDomain()).ToListAsync();                     // with time - 00:00
     }
 }

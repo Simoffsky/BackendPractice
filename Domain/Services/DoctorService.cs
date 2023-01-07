@@ -10,37 +10,37 @@ public class DoctorService {
 	}
 
 
-	public Result<Doctor> CreateDoctor(Doctor doctor) {
+	public async Task<Result<Doctor>> CreateDoctor(Doctor doctor) {
 		if (string.IsNullOrEmpty(doctor.FullName))
 			return Result.Fail<Doctor>("Invalid doctor FullName");
 
-		if (_repository.Exists(doctor.Id))
+		if (await _repository.Exists(doctor.Id))
 			return Result.Fail<Doctor>("Doctor already exists");
 		
-		_repository.Create(doctor);
+		await _repository.Create(doctor);
 		return Result.Ok(doctor);
 	}
 
-	public Result DeleteDoctor(int id) {
-		if (!_repository.Exists(id))
+	public async Task<Result> DeleteDoctor(int id) {
+		if (!await _repository.Exists(id))
 			return Result.Fail<Doctor>("Doctor doesn't exists");
 		
-		_repository.Delete(id);
+		await _repository.Delete(id);
 		return Result.Ok();
 	}
 
-	public Result<IEnumerable<Doctor>> GetAll() {
-		return Result.Ok(_repository.List());
+	public async Task<Result<IEnumerable<Doctor>>> GetAll() {
+		return Result.Ok(await _repository.List());
 	}
 
-	public Result<Doctor> GetById(int id) {
-		if (!_repository.Exists(id))
+	public async Task<Result<Doctor>> GetById(int id) {
+		if (!await _repository.Exists(id))
 			return Result.Fail<Doctor>("Doctor doesn't exists");
 		
-		return Result.Ok<Doctor>(_repository.Get(id));
+		return Result.Ok<Doctor>(await _repository.Get(id));
 	}
 
-	public Result<IEnumerable<Doctor>> GetBySpec(Specialization spec) {
-		return Result.Ok(_repository.GetBySpec(spec));
+	public async Task<Result<IEnumerable<Doctor>>> GetBySpec(Specialization spec) {
+		return Result.Ok(await _repository.GetBySpec(spec));
 	}
 }

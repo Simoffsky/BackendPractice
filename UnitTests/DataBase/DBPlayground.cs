@@ -12,84 +12,77 @@ public class DBPlayground {
     }
 
     [Fact]
-    public void UserRepositoryCreate() {
+    public async Task UserRepositoryCreate() {
         var context = _dbFactory.CreateDbContext();
         var repo = new UserRepository(context);
         var user = new User("Vasek", "123", 1, "+7914634635", "Vasua Krasnoshek", Role.Patient);
-        repo.Create(user);
-        context.SaveChanges();
-        Assert.True(repo.ExistLogin(user.Username));
-        repo.Delete(user.Id);
-        context.SaveChanges();
+        await repo.Create(user);
+        
+        Assert.True(await repo.ExistLogin(user.Username));
+        await repo.Delete(user.Id);
     }
 
     [Fact]
-    public void UserRepositoryNotExists() {
+    public async Task UserRepositoryNotExists() {
         var context = _dbFactory.CreateDbContext();
         var repo = new UserRepository(context);
         var user = new User("Vasek", "123", 1, "+7914634635", "Vasua Krasnoshek", Role.Patient);
-        repo.Create(user);
-        context.SaveChanges();
-        Assert.False(repo.ExistLogin("Sima"));
-        repo.Delete(user.Id);
-        context.SaveChanges();
+        await repo.Create(user);
+        
+        Assert.False(await repo.ExistLogin("Sima"));
+        await repo.Delete(user.Id);
+        
     }
-
+    
     [Fact]
-    public void UserRepositoryPgTest() {
+    public async Task UserRepositoryPgTest() {
         // Write here any test
         var context = _dbFactory.CreateDbContext();
         var repo = new UserRepository(context);
-
+    
         var assertList = new List<User>();
         var user = new User("Vasek", "123", 1, "+7914634635", "Vasua Krasnoshek", Role.Patient);
         assertList.Add(user);
-        repo.Create(user);
+        await repo.Create(user);
         user = new User("Pip", "123", 2, "+7914634635", "Pip Krasnoshek", Role.Patient);
         assertList.Add(user);
-        repo.Create(user);
-
-        context.SaveChanges();
-
-        var testList = repo.List().ToList();
-        for (int i = 0; i < assertList.Count; ++i) {
+        await repo.Create(user);
+        
+    
+        var testList = (await repo.List()).ToList();
+        for (var i = 0; i < assertList.Count; ++i) {
             Assert.Equal(testList[i].Id, assertList[i].Id);
             Assert.Equal(testList[i].FullName, assertList[i].FullName);
-            repo.Delete(testList[i].Id);
+            await repo.Delete(testList[i].Id);
         }
-
-        context.SaveChanges();
     }
-
+    
     //[Fact]
-    public void DoctorRepositoryPgTest() {
+    public async Task DoctorRepositoryPgTest() {
         // Write here any test
         var context = _dbFactory.CreateDbContext();
         var repo = new DoctorRepository(context);
         var spec = new Specialization(1, "Proktolog");
-        repo.Create(new Doctor(1, "Vasua", spec));
-        context.SaveChanges();
-        var list = repo.GetBySpec(spec).ToList();
+        await repo.Create(new Doctor(1, "Vasua", spec));
+        var list = (await repo.GetBySpec(spec)).ToList();
         Assert.Equal(list[0].Id, 1);
     }
-
+    
     [Fact]
-    public void ScheduleRepositoryPgTest() {
+    public async Task ScheduleRepositoryPgTest() {
         var context = _dbFactory.CreateDbContext();
         var repo = new ScheduleRepository(context);
         var schedule = new Schedule(1, 1,
             new DateTime(2022, 12, 15, 15, 0, 0, 0),
             new DateTime(2022, 12, 15, 15, 30, 0, 0)); // half hour difference
         
-        repo.Create(schedule);
-        context.SaveChanges();
-
+        await repo.Create(schedule);
+    
         var spec = new Specialization(1, "Proktolog");
-        var test = repo.GetScheduleByDate(new Doctor(1, "Vasua", spec), new DateOnly(2022, 12, 15)).ToList()[0];
+        var test = repo.GetScheduleByDate(new Doctor(1, "Vasua", spec), new DateOnly(2022, 12, 15)).Result.ToList()[0];
         
         Assert.True(test.Id == schedule.Id && test.DoctorId == schedule.DoctorId);
         
-        repo.Delete(schedule.Id);
-        context.SaveChanges();
+        await repo.Delete(schedule.Id);
     }
 }

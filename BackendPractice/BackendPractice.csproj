@@ -21,4 +21,8 @@
       <None Include="private.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Test" />
+    </ItemGroup>
+
 </Project>

@@ -15,11 +15,11 @@ public class UserController: ControllerBase {
         _service = service;
     }
     [HttpGet("login")]
-    public ActionResult<UserView> GetUserByLogin(string login) {
+    public async Task<ActionResult<UserView>> GetUserByLogin(string login) {
         if (login == string.Empty)
             return Problem(statusCode: 404, detail: "Login was not provided...");
 
-        var userRes = _service.GetByLogin(login);
+        var userRes = await _service.GetByLogin(login);
         if (!userRes.Success)
             return Problem(statusCode: 404, detail: userRes.Error);
         return Ok(new UserView {
@@ -34,7 +34,7 @@ public class UserController: ControllerBase {
     
     [Authorize]
     [HttpPost("CreateUser")]
-    public ActionResult<UserView> CreateUser(UserView userView)
+    public async Task<ActionResult<UserView>> CreateUser(UserView userView)
     {
         if (string.IsNullOrEmpty(userView.Username)) 
             return Problem(statusCode: 404, detail: "Login is empty or null.");
@@ -50,7 +50,7 @@ public class UserController: ControllerBase {
             userView.FullName,
             userView.Role);
         
-        var userResult = _service.CreateUser(user);
+        var userResult = await _service.CreateUser(user);
         
          if (!userResult.Success)
              return Problem(statusCode: 400, detail: userResult.Error);
@@ -59,8 +59,8 @@ public class UserController: ControllerBase {
     }
     
     [HttpGet("exists")]
-    public ActionResult<UserView> IsUserExists(string login, string password) {
-        var res = _service.CheckExist(login, password);
+    public async Task<ActionResult<UserView>> IsUserExists(string login, string password) {
+        var res = await _service.CheckExist(login, password);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
         return Ok(res.Value);

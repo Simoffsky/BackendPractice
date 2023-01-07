@@ -1,6 +1,7 @@
 using DataBase.Converters;
 using DataBase.Models;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataBase.Repositories; 
 
@@ -11,31 +12,31 @@ public class UserRepository : IUserRepository {
         _context = context;
     }
     
-    public User Create(User item) {
-        _context.Users.Add(item.ToModel());
-        _context.SaveChanges();
+    public async Task<User> Create(User item) {
+        await _context.Users.AddAsync(item.ToModel());
+        await _context.SaveChangesAsync();
         return item;
     }
 
-    public User? Get(int id) {
-        var user = _context.Users.FirstOrDefault(user => user.Id == id);
-        return user?.ToDomain();
+    public async Task<User> Get(int id) {
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
+        return user.ToDomain();
     }
     
-    public IEnumerable<User> List() {
-        return _context.Users.Select(userModel => userModel.ToDomain()).ToList();
+    public async Task<IEnumerable<User>> List() {
+        return await _context.Users.Select(userModel => userModel.ToDomain()).ToListAsync();
     }
 
-    public bool Exists(int id) {
-        return _context.Users.Any(user => user.Id == id);
+    public async Task<bool> Exists(int id) {
+        return await _context.Users.AnyAsync(user => user.Id == id);
     }
 
-    public bool Delete(int id) {
-        var user = _context.Users.FirstOrDefault(user => user.Id == id);
+    public async Task<bool> Delete(int id) {
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
         if (user == default)
             return false; // not deleted
         _context.Users.Remove(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
@@ -53,22 +54,22 @@ public class UserRepository : IUserRepository {
         return true;
     }
 
-    public User Update(User entity) {
+    public async Task<User> Update(User entity) {
         _context.Users.Update(entity.ToModel());
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return entity;
     }
 
-    public bool ExistLogin(string login, string password) {
-        return _context.Users.Any(user => user.Username == login && user.Password == password);
+    public async Task<bool> ExistLogin(string login, string password) {
+        return await _context.Users.AnyAsync(user => user.Username == login && user.Password == password);
     }
 
-    public bool ExistLogin(string login) {
-        return _context.Users.Any(user => user.Username == login);
+    public async Task<bool> ExistLogin(string login) {
+        return await _context.Users.AnyAsync(user => user.Username == login);
     }
 
-    public User? GetByLogin(string login) {
-        var user = _context.Users.FirstOrDefault(user => user.Username == login);
+    public async Task<User?> GetByLogin(string login) {
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Username == login);
         return user?.ToDomain();
     }
 }
