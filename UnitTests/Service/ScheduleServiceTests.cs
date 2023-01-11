@@ -24,121 +24,121 @@ public class ScheduleServiceTests {
 
     public void GetByDoctorNotExist() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         
         _doctorRepository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
             .Returns(true);
         
         var res = _scheduleService.GetByDoctor(GetDoctor(), new DateOnly());
 
-        Assert.False(res.Success);
-        Assert.Equal("Doctor doesn't exists", res.Error);
+        Assert.False(res.Result.Success);
+        Assert.Equal("Doctor doesn't exists", res.Result.Error);
     }
     
     [Fact]
     public void GetByDoctorNotValid() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         _doctorRepository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
             .Returns(false);
         
         var res = _scheduleService.GetByDoctor(GetDoctor(), new DateOnly());
 
-        Assert.False(res.Success);
-        Assert.Equal("Doctor is not invalid", res.Error);
+        Assert.False(res.Result.Success);
+        Assert.Equal("Doctor is not invalid", res.Result.Error);
     }
     
     [Fact]
     public void GetByDoctorOk() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         _doctorRepository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
             .Returns(true);
 
         var res = _scheduleService.GetByDoctor(GetDoctor(), new DateOnly());
         
-        Assert.True(res.Success);
+        Assert.True(res.Result.Success);
     }
 
     [Fact]
     public void AddScheduleDoctorIsNotExists() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         _doctorRepository.Setup(repo => repo.IsValid(It.IsAny<Doctor>()))
             .Returns(true);
 
         var res = _scheduleService.Add(GetSchedule());
         
-        Assert.False(res.Success);
-        Assert.Equal("Doctor doesn't exists", res.Error);
+        Assert.False(res.Result.Success);
+        Assert.Equal("Doctor doesn't exists", res.Result.Error);
         
     }
 
     [Fact]
     public void AddScheduleAlreadyExists() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         _scheduleRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         var res = _scheduleService.Add(GetSchedule());
         
-        Assert.False(res.Success);
-        Assert.Equal("Schedule already exists", res.Error);
+        Assert.False(res.Result.Success);
+        Assert.Equal("Schedule already exists", res.Result.Error);
     }
 
     [Fact]
     public void AddScheduleOk() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         _scheduleRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         
         var res = _scheduleService.Add(GetSchedule());
-        Assert.True(res.Success);
+        Assert.True(res.Result.Success);
     }
 
     [Fact]
     public void UpdateScheduleIsNotExists() {
         _scheduleRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         
         var res = _scheduleService.Update(GetSchedule());
-        Assert.False(res.Success);
-        Assert.Equal("Schedule Doesn't exists", res.Error);
+        Assert.False(res.Result.Success);
+        Assert.Equal("Schedule Doesn't exists", res.Result.Error);
     }
 
     [Fact]
     public void UpdateScheduleOk() {
         _scheduleRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         var res = _scheduleService.Update(GetSchedule());
-        Assert.True(res.Success);
+        Assert.True(res.Result.Success);
     }
 
     [Fact]
 
     public void DeleteNotExists() {
         _scheduleRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         
         var res = _scheduleService.Delete(GetSchedule());
-        Assert.False(res.Success);
-        Assert.Equal("Schedule Doesn't exists", res.Error);
+        Assert.False(res.Result.Success);
+        Assert.Equal("Schedule Doesn't exists", res.Result.Error);
     }
     
     [Fact]
     public void DeleteOk() {
         _scheduleRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         var res = _scheduleService.Delete(GetSchedule());
-        Assert.True(res.Success);
+        Assert.True(res.Result.Success);
     }
     
 }

@@ -1,6 +1,7 @@
 using BackendPractice.View;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPractice.Controllers; 
@@ -10,13 +11,16 @@ namespace BackendPractice.Controllers;
 [Route("Appointment")]
 public class AppointmentController: ControllerBase {
     private readonly AppointmentService _service;
+    private readonly DoctorService _doctorService;
 
-    public AppointmentController(AppointmentService service) {
+    public AppointmentController(AppointmentService service, DoctorService doctorService) {
         _service = service;
+        _doctorService = doctorService;
     }
 
+    [Authorize]
     [HttpPost("add")]
-    public ActionResult<AppointmentView> SaveAppointment(AppointmentView appointmentView) {
+    public async Task<ActionResult<AppointmentView>> SaveAppointment(AppointmentView appointmentView) {
         var appointment = new Appointment(
             appointmentView.Id,
             appointmentView.StartTime,
@@ -24,16 +28,17 @@ public class AppointmentController: ControllerBase {
             appointmentView.PatientId,
             appointmentView.DoctorId
         );
-        var res = _service.AddToConcreteDate(appointment);
+        var res = await _service.AddToConcreteDate(appointment);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
         
         return Ok(appointmentView);
     }
     
+    [Authorize]
     [HttpPost("add_by_spec")]
-    public ActionResult<AppointmentView> SaveAppointmentBySpec(DateTime dateTime, Specialization spec) {
-        var res = _service.AddToConcreteDate(dateTime, spec);
+    public async Task<ActionResult<AppointmentView>> SaveAppointmentBySpec(DateTime dateTime, Specialization spec) {
+        var res = await _service.AddToConcreteDate(dateTime, spec);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
 
@@ -47,8 +52,8 @@ public class AppointmentController: ControllerBase {
     }
 
     [HttpGet("get_free_by_spec")]
-    public ActionResult<List<DateTime>> GetFreeBySpec(Specialization spec) {
-        var res = _service.GetFreeBySpec(spec);
+    public async Task<ActionResult<List<DateTime>>> GetFreeBySpec(Specialization spec) {
+        var res = await _service.GetFreeBySpec(spec);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
 
@@ -57,8 +62,13 @@ public class AppointmentController: ControllerBase {
     }
     
     [HttpGet("get_free_by_doctor")]
-    public ActionResult<List<DateTime>> GetFreeByDoctor(Doctor doctor) {
-        var res = _service.GetFreeByDoctor(doctor);
+    public async Task<ActionResult<List<DateTime>>> GetFreeByDoctor(int doctorId) {
+        var doctorRes = await _doctorService.GetById(doctorId);
+        if (!doctorRes.Success)
+            return Problem(statusCode: 404, detail: doctorRes.Error);
+
+        
+        var res = await _service.GetFreeByDoctor(doctorRes.Value);
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
 

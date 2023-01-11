@@ -31,87 +31,87 @@ public class AppointmentServiceTests {
     [Fact]
     public void AddToConcreteDateByDoctorIsNotExists() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         _doctorRepository.Setup(repo => repo.Get(It.Is<int>(id => id == 1)))
-            .Returns(GetDoctor());
+            .ReturnsAsync(GetDoctor());
         
         var response = _appointmentService.AddToConcreteDate(GetAppointment());
         
-        Assert.False(response.Success);
-        Assert.Equal("Doctor doesn't exists", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("Doctor doesn't exists", response.Result.Error);
     }
     [Fact]
     public void AddToConcreteDateByDoctorTimeTaken() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         _doctorRepository.Setup(repo => repo.Get(It.Is<int>(id => id == 1)))
-            .Returns(GetDoctor());
+            .ReturnsAsync(GetDoctor());
         _repository.Setup(repo => repo.CheckFreeByDoctor(It.IsAny<DateTime>(), It.Is<Doctor>(doctor => doctor.Id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
 
         var response = _appointmentService.AddToConcreteDate(GetAppointment());
-        Assert.False(response.Success);
-        Assert.Equal("Date with this doctor already taken", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("Date with this doctor already taken", response.Result.Error);
     }
     
     [Fact]
     public void AddToConcreteDateByDoctorOk() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         _doctorRepository.Setup(repo => repo.Get(It.Is<int>(id => id == 1)))
-            .Returns(GetDoctor());
+            .ReturnsAsync(GetDoctor());
         _repository.Setup(repo => repo.CheckFreeByDoctor(It.IsAny<DateTime>(), It.Is<Doctor>(doctor => doctor.Id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         var response = _appointmentService.AddToConcreteDate(GetAppointment());
         
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 
     [Fact]
     public void AddToConcreteDateBySpecNoFreeTime() {
         _repository.Setup(repo => repo.CheckFreeBySpec(It.IsAny<DateTime>(), It.IsAny<Specialization>()))
-            .Returns(false);
+            .ReturnsAsync(false);
 
         var response = _appointmentService.AddToConcreteDate(DateTime.Now, GetSpecialization());
         
-        Assert.False(response.Success);
-        Assert.Equal("No free doctors for this spec/time", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("No free doctors for this spec/time", response.Result.Error);
     }
 
     [Fact]
     public void AddToConcreteDateBySpecOk() {
         _repository.Setup(repo => repo.CheckFreeBySpec(It.IsAny<DateTime>(), It.IsAny<Specialization>()))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         var response = _appointmentService.AddToConcreteDate(DateTime.Now, GetSpecialization());
         
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 
     [Fact]
     public void GetFreeBySpecOk() {
         var response = _appointmentService.GetFreeBySpec(GetSpecialization());
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 
     [Fact]
     public void GetFreeByDoctorIsNotExists() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         
         var response = _appointmentService.GetFreeByDoctor(GetDoctor());
         
-        Assert.False(response.Success);
-        Assert.Equal("Doctor doesn't exists", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("Doctor doesn't exists", response.Result.Error);
     }
     
     [Fact]
     public void GetFreeByDoctorOk() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
         var response = _appointmentService.GetFreeByDoctor(GetDoctor());
         
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 }

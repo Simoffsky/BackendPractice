@@ -11,36 +11,36 @@ public class AppointmentService {
 		_doctorRepository = doctorRepo;
 	}
 
-	public Result<Appointment> AddToConcreteDate(Appointment appointment) {
-		var doctor = _doctorRepository.Get(appointment.DoctorId);
-		if (!_doctorRepository.Exists(doctor.Id))
+	public async Task<Result<Appointment>> AddToConcreteDate(Appointment appointment) {
+		var doctor = await _doctorRepository.Get(appointment.DoctorId);
+		if (!await _doctorRepository.Exists(doctor.Id))
 			return Result.Fail<Appointment>("Doctor doesn't exists");
 
-		if (!_repository.CheckFreeByDoctor(appointment.StartTime, doctor))
+		if (!await _repository.CheckFreeByDoctor(appointment.StartTime, doctor))
 			return Result.Fail<Appointment>("Date with this doctor already taken");
 
-		_repository.Create(appointment);
+		await _repository.Create(appointment);
 		return Result.Ok(appointment);
 	}
 
-	public Result<Appointment> AddToConcreteDate(DateTime dateTime, Specialization spec) {
-		if (!_repository.CheckFreeBySpec(dateTime, spec))
+	public async Task<Result<Appointment>> AddToConcreteDate(DateTime dateTime, Specialization spec) {
+		if (!await _repository.CheckFreeBySpec(dateTime, spec))
 			return Result.Fail<Appointment>("No free doctors for this spec/time");
 
 		var appointment = _repository.CreateBySpec(dateTime, spec);
 		return Result.Ok(appointment);
 	}
 
-	public Result<IEnumerable<DateTime>> GetFreeBySpec(Specialization spec) {
-		var appointments = _repository.GetAllBySpec(spec);
+	public async Task<Result<IEnumerable<DateTime>>> GetFreeBySpec(Specialization spec) {
+		var appointments = await _repository.GetAllBySpec(spec);
 		var list = ExcludeAppointments(appointments);
 		return Result.Ok(list);
 	}
 
-	public Result<IEnumerable<DateTime>> GetFreeByDoctor(Doctor doctor) {
-		if (!_doctorRepository.Exists(doctor.Id))
+	public async Task<Result<IEnumerable<DateTime>>> GetFreeByDoctor(Doctor doctor) {
+		if (!await _doctorRepository.Exists(doctor.Id))
 			return Result.Fail<IEnumerable<DateTime>>("Doctor doesn't exists");
-		var appointments = _repository.GetAllByDoctor(doctor);
+		var appointments = await _repository.GetAllByDoctor(doctor);
 		var list = ExcludeAppointments(appointments);
 		return Result.Ok(list);
 	}

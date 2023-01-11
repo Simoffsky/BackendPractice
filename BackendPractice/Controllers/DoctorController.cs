@@ -1,6 +1,7 @@
 using BackendPractice.View;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPractice.Controllers; 
@@ -13,10 +14,11 @@ public class DoctorController: ControllerBase {
     _service = service;
     }
     
+    [Authorize]
     [HttpPost("create")]
-    public ActionResult<DoctorView> CreateDoctor(string name, Specialization spec) {
+    public async Task<ActionResult<DoctorView>> CreateDoctor(string name, Specialization spec) {
     Doctor doctor = new(0, name, spec);
-        var res = _service.CreateDoctor(doctor);
+        var res = await _service.CreateDoctor(doctor);
 
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
@@ -29,8 +31,8 @@ public class DoctorController: ControllerBase {
     }
     
     [HttpDelete("delete")]
-    public ActionResult<DoctorView> DeleteDoctor(int id) {
-    var res = _service.DeleteDoctor(id);
+    public async Task<ActionResult<DoctorView>> DeleteDoctor(int id) {
+    var res = await _service.DeleteDoctor(id);
 
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
@@ -39,8 +41,8 @@ public class DoctorController: ControllerBase {
     }
     
     [HttpGet("get_all")]
-    public ActionResult<List<DoctorView>> GetAllDoctors() {
-        var res = _service.GetAll();
+    public async Task<ActionResult<List<DoctorView>>> GetAllDoctors() {
+        var res = await _service.GetAll();
         List<DoctorView> doctors = new List<DoctorView>();
         foreach (var doc in res.Value) {
             var docView = new DoctorView {
@@ -58,8 +60,8 @@ public class DoctorController: ControllerBase {
     }
     
     [HttpGet("find")]
-    public ActionResult<DoctorView> FindDoctor(int id) {
-        var res = _service.GetById(id);
+    public async Task<ActionResult<DoctorView>> FindDoctor(int id) {
+        var res = await _service.GetById(id);
 
         if (!res.Success)
             return Problem(statusCode: 404, detail: res.Error);
@@ -73,8 +75,8 @@ public class DoctorController: ControllerBase {
     }
     
     [HttpGet("spec")]
-    public ActionResult<List<DoctorView>> GetBySpec(Specialization spec) {
-        var res = _service.GetBySpec(spec);
+    public async Task<ActionResult<List<DoctorView>>> GetBySpec(Specialization spec) {
+        var res = await _service.GetBySpec(spec);
         List<DoctorView> doctors = new List<DoctorView>();
         foreach (var doc in res.Value) {
             var docView = new DoctorView {
